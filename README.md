@@ -1,61 +1,36 @@
-# Source Code for Finite Element Analysis
-# Calculating I-Section Dimension
+# Spotify Recommender Engine
 
-Part of a college assignment, fourth week of May 2020. 
-For the grid P5-51, determine the nodal displacements and the local element forces. 
+This project is based on the [Kaggle dataset](https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks) by [Yamaç Eren Ay](https://www.kaggle.com/yamaerenay). In this project, there are a couple of questions -- both from the author and myself. These are as follows:
 
-Let: 
-- E = 210 GPa
-- G = 84 GPa
-- I = 2 * 10^-4 m^4
-- J = 1 * 10^-4 m^4
-- A = 1 * 10^-2 m^2
+## 1. Recommend similar songs based on genre/artist.
 
-<img src="images/fea.png"/>
+### Task Details
+Given a number of input from the user (representing that user's preference), I expect to be able to recommend similar songs based on that input. Such recommendation can vary from genre-based and artist-based. 
 
-The formula for *area moment of Inertia* (I) for cross-sectional I-beams is as follows:
+For example, if a user inputs `Metalcore` as their most preferred genre, the engine might recommend songs belonging to `Hardcore Punk` than it is to recommend `Thrash Metal`, despite they three are of the same primary genre which is metal.
 
-<img src="images/fea2.png"/>
+Likewise, if a user inputs `In This Moment` as their most preferred band, the engine might recommend songs from `Black Veil Brides` than it is to recommend ones from `Alice in Chains`, because the two former are more gothic than the latter despite those are of the same primary genre, which is also metal.
 
-With:
+One big idea is also to introduce a feature where the engine recommends songs from the same popular playlist -- for example, a videogame soundtrack. This is basically saying: "Because you enjoy song A from a videogame called X. You might enjoy song B from the same videogame"
 
-<img src="images/fea3.png"/>
-*Credit: [The Engineering Toolbox](https://www.engineeringtoolbox.com/area-moment-inertia-d_1328.html)*
+## 2. Recommend modern-sounding sounds based on time-series analysis
 
-In which we cannot solve for the values of **a, b, H, and h** alone. **h** is defined as **H - thickness**. We may define **thickness** as **c**. Note that we are only solving with respect to the X axis, and not the Y axis. 
+### Task Details
+We can also try to analyze the music trends based on the year they're released (i.e. what are the characteristics of music from each decade). For example, both Elton John and Britney Spears are very popular amongst all manner of audiences -- despite they thrive in their own golden age. We try to analyze numerically how do Elton's and Britney's music are represented via numbers.
 
-Regarding this manner, we might iterate over the values of **a, b , H and c** with ***NumPy Arrays***
+Then, based on a given year as input, we can then recommend the songs most suited to represent that era. For instance, if an input is the year '1985', we'd want the engine to recommend `Motley Crue` than it is to recommend `Justin Bieber`.
 
-Source code:
-```python3
-import numpy as np
-points = np.arange(0.0, 20.0, 0.001)
-for a in points:
-    for b in points:
-        for c in points:
-            for d in points:
-                num1 = b * (a**3)
-                denum1 = 12
-                num2 = ((b-d) / 2 ) * (a - ((2*c)**3))
-                denum2 = 12
-                form = num1/denum1 - (2*(num2/denum2))
-                form = round(form, 3)
-                if form < 0.00025 and form > 0.00015:
-                    print(form)
-                    print("with a = {0}, b = {1}, c = {2}, d = {3}".format(a,b,c,d))
-                    print("---------------------------")
-                else:
-                    pass
-print("end")
-```
-Will print iterations within the nested loop. If the result is less than 0.00015 and more than 0.00025, the print prompt will not be executed. I found the closest value to the given *area moment of inertia* in this particular part of the iteration:
-```
-0.00020624
-with a = 0.015, b = 0.035, c = 0.005, d = 0.2
----------------------------
-```
-\*) Units are in metric metres, as specified in the problem above.
+## 3. Recommend songs that two users will both enjoy
 
-We then can conclude that the dimensions we're looking for looks (roughly) like this:
+### Task Details
+The third and probably the hardest question to answer (for me, at least) is to recommend songs based on the preference of two users. For this, I would need to connect to the Spotify Developer API. The input is two different user ID, and the output is songs that they both would most likely enjoy based on their listening habits.
 
-<img src="images/fea4.png"/>
+For example, user A frequently listens to upbeat and pop music, while user B frequently listens to classic rock ballads. The recommender engine tries to find the meeting point for both users' preferences, and recommends tracks based on that meeting point.
+
+--- 
+
+### License Agreement
+
+This dataset is licensed under Community Data License Agreement – Sharing, Version 1.0. By using this data, I hereby consent to share any changes, modifications, and deployable models based on this data over the course of this project.
+
+The Community Data License Agreement workgroup under The Linux Foundation is the steward of this Agreement. No one other than the Steward has the right to modify or publish new versions of this Agreement.
